@@ -177,7 +177,7 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`Horizonte Inmobiliaria escuchando en http://localhost:${PORT}`);
+  console.log(`BÔMMAIN escuchando en http://localhost:${PORT}`);
   console.log(`  Sitio publico:  http://localhost:${PORT}/`);
   console.log(`  Panel admin:    http://localhost:${PORT}/admin`);
 });

@@ -1,8 +1,8 @@
 {
-  "name": "horizonte-backend",
+  "name": "bommain-backend",
   "version": "1.0.0",
   "private": true,
-  "description": "API y panel de administracion de Horizonte Inmobiliaria",
+  "description": "API y panel de administracion de BOMMAIN",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

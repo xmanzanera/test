@@ -4,7 +4,7 @@ const crypto = require('node:crypto');
 
 const SECRET = process.env.SESSION_SECRET || 'dev-secret-change-me-in-production';
 const TOKEN_TTL_MS = 1000 * 60 * 60 * 24 * 7; // 7 dias
-const COOKIE_NAME = 'horizonte_admin_session';
+const COOKIE_NAME = 'bommain_admin_session';
 
 function hashPassword(password) {
   const salt = crypto.randomBytes(16).toString('hex');

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title id="pageTitleTag">Inmueble · Horizonte Inmobiliaria</title>
+<title id="pageTitleTag">Inmueble · BÔMMAIN</title>
 <link rel="stylesheet" href="/css/styles.css" />
 </head>
 <body>
@@ -46,7 +46,7 @@
       }
       try {
         const p = await fetchJson(`/api/properties/slug/${encodeURIComponent(slug)}`);
-        document.getElementById('pageTitleTag').textContent = `${p.title} · Horizonte Inmobiliaria`;
+        document.getElementById('pageTitleTag').textContent = `${p.title} · BÔMMAIN`;
 
         const chips = [];
         if (p.has_elevator) chips.push('Ascensor');
@@ -90,7 +90,7 @@
                   <div class="field"><label>Email</label><input name="email" type="email" required /></div>
                   <div class="field"><label>Teléfono</label><input name="phone" /></div>
                   <div class="field"><label>Mensaje</label><textarea name="message" rows="4" required>Hola, estoy interesado/a en este inmueble (${escapeHtml(p.reference)}). ¿Podríais darme más información?</textarea></div>
-                  <button class="btn btn-gold" type="submit" style="width:100%;">Enviar consulta</button>
+                  <button class="btn btn-accent" type="submit" style="width:100%;">Enviar consulta</button>
                 </form>
               </div>
             </div>

@@ -77,7 +77,7 @@ CREATE INDEX IF NOT EXISTS idx_images_property ON property_images(property_id);
 function seedIfEmpty() {
   const { count } = db.prepare('SELECT COUNT(*) AS count FROM admin_users').get();
   if (count === 0) {
-    const email = process.env.ADMIN_EMAIL || 'admin@horizonte.test';
+    const email = process.env.ADMIN_EMAIL || 'admin@bommain.test';
     const password = process.env.ADMIN_PASSWORD || 'admin1234';
     db.prepare(
       'INSERT INTO admin_users (email, password_hash, name) VALUES (?, ?, ?)'
@@ -89,7 +89,7 @@ function seedIfEmpty() {
   if (propCount === 0) {
     const demo = [
       {
-        reference: 'HZ-0001',
+        reference: 'BM-0001',
         slug: 'atico-con-terraza-en-el-centro',
         title: 'Ático con terraza en el centro',
         description:
@@ -113,7 +113,7 @@ function seedIfEmpty() {
         status: 'published',
       },
       {
-        reference: 'HZ-0002',
+        reference: 'BM-0002',
         slug: 'piso-luminoso-junto-al-parque',
         title: 'Piso luminoso junto al parque',
         description:
@@ -137,7 +137,7 @@ function seedIfEmpty() {
         status: 'published',
       },
       {
-        reference: 'HZ-0003',
+        reference: 'BM-0003',
         slug: 'chalet-independiente-con-piscina',
         title: 'Chalet independiente con piscina',
         description:
@@ -161,7 +161,7 @@ function seedIfEmpty() {
         status: 'published',
       },
       {
-        reference: 'HZ-0004',
+        reference: 'BM-0004',
         slug: 'estudio-en-alquiler-cerca-de-la-universidad',
         title: 'Estudio en alquiler cerca de la universidad',
         description:
@@ -185,7 +185,7 @@ function seedIfEmpty() {
         status: 'published',
       },
       {
-        reference: 'HZ-0005',
+        reference: 'BM-0005',
         slug: 'local-comercial-en-avenida-principal',
         title: 'Local comercial en avenida principal',
         description:
@@ -209,7 +209,7 @@ function seedIfEmpty() {
         status: 'published',
       },
       {
-        reference: 'HZ-0006',
+        reference: 'BM-0006',
         slug: 'duplex-a-reformar-con-vistas',
         title: 'Dúplex a reformar con vistas',
         description:

@@ -1,10 +1,13 @@
-# Horizonte Inmobiliaria
+# BÔMMAIN
 
-Plataforma inmobiliaria de demostración con **sitio público** (frontend) y
-**panel de administración** para la gestión de inmuebles (backend), inspirada
-en la estructura habitual de una web inmobiliaria: listado de propiedades con
-filtros, ficha de detalle, formulario de contacto y un panel privado desde el
-que el equipo gestiona el catálogo.
+Plataforma inmobiliaria de demostración — *"Trobem la teva llar"* — con
+**sitio público** (frontend) y **panel de administración** para la gestión de
+inmuebles (backend), inspirada en la estructura habitual de una web
+inmobiliaria: listado de propiedades con filtros, ficha de detalle,
+formulario de contacto y un panel privado desde el que el equipo gestiona el
+catálogo. La identidad visual (logotipo, paleta y tipografías) sigue el
+manual de marca BÔMMAIN: azul petróleo `#0F2436` y turquesa `#20B6C1`,
+tipografía Montserrat para titulares y Inter para texto.
 
 > Proyecto original con marca, textos e imágenes ficticios, creado con fines
 > educativos/demostrativos. No reproduce contenido real de terceros.
@@ -41,7 +44,7 @@ ejemplo. Verás en la consola las credenciales generadas (o las que hayas
 definido en `.env`):
 
 ```
-[seed] Usuario admin creado -> admin@horizonte.test / admin1234
+[seed] Usuario admin creado -> admin@bommain.test / admin1234
 ```
 
 Con el servidor en marcha:

@@ -1,27 +1,57 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
 :root {
-  --navy: #0f2942;
-  --navy-light: #16385a;
-  --gold: #c8a34d;
+  --navy: #0f2436;
+  --navy-light: #1b3c53;
+  --teal: #20b6c1;
+  --teal-dark: #17939c;
   --bg: #f4f5f7;
   --card: #ffffff;
   --text: #1c2530;
   --muted: #6b7684;
-  --border: #e3e6ea;
+  --border: #e6e6e6;
   --danger: #c0392b;
   --success: #1f8a4c;
   --radius: 10px;
+  --font-heading: 'Montserrat', 'Segoe UI', system-ui, sans-serif;
+  --font-body: 'Inter', 'Segoe UI', system-ui, sans-serif;
 }
 
 * { box-sizing: border-box; }
 
 body {
   margin: 0;
-  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-family: var(--font-body);
   background: var(--bg);
   color: var(--text);
 }
 
+h1, h2, h3, .page-header h1 { font-family: var(--font-heading); }
+
 a { color: inherit; text-decoration: none; }
+
+/* --- Marca BOMMAIN --- */
+.brand-logo {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .01em;
+  color: var(--navy);
+  white-space: nowrap;
+}
+.brand-logo .brand-mark {
+  display: inline-flex;
+  width: 1em;
+  height: 1em;
+  margin: 0 .04em;
+  color: currentColor;
+  flex-shrink: 0;
+}
+.brand-logo .brand-mark svg { width: 100%; height: 100%; display: block; }
+.brand-logo .brand-mark .bar { stroke: var(--teal); }
+.brand-logo.on-dark { color: #fff; }
 
 .auth-shell {
   min-height: 100vh;
@@ -48,9 +78,8 @@ a { color: inherit; text-decoration: none; }
   margin-bottom: 24px;
 }
 
-.auth-card .brand .dot { width: 12px; height: 12px; border-radius: 3px; background: var(--gold); }
-.auth-card .brand span { font-weight: 700; font-size: 1.15rem; letter-spacing: .3px; }
-.auth-card h1 { font-size: 1.1rem; margin: 0 0 20px; color: var(--muted); font-weight: 500; }
+.auth-card .brand .brand-logo { font-size: 1.2rem; }
+.auth-card h1 { font-size: 1.1rem; margin: 0 0 20px; color: var(--muted); font-weight: 500; font-family: var(--font-body); }
 
 .field { margin-bottom: 16px; }
 .field label { display: block; font-size: .82rem; color: var(--muted); margin-bottom: 6px; }
@@ -65,7 +94,7 @@ a { color: inherit; text-decoration: none; }
 }
 .field input:focus, .field select:focus, .field textarea:focus {
   outline: none;
-  border-color: var(--gold);
+  border-color: var(--teal);
 }
 
 .btn {
@@ -83,7 +112,7 @@ a { color: inherit; text-decoration: none; }
 }
 .btn:hover { opacity: .88; }
 .btn-primary { background: var(--navy); color: #fff; }
-.btn-gold { background: var(--gold); color: var(--navy); }
+.btn-accent { background: var(--teal); color: var(--navy); }
 .btn-danger { background: var(--danger); color: #fff; }
 .btn-outline { background: transparent; color: var(--navy); border: 1px solid var(--border); }
 .btn-block { width: 100%; }
@@ -124,14 +153,15 @@ a { color: inherit; text-decoration: none; }
 }
 .sidebar .brand {
   display: flex;
-  align-items: center;
-  gap: 10px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
   padding: 0 22px 22px;
   border-bottom: 1px solid rgba(255,255,255,.1);
   margin-bottom: 16px;
 }
-.sidebar .brand .dot { width: 12px; height: 12px; border-radius: 3px; background: var(--gold); flex-shrink: 0; }
-.sidebar .brand span { font-weight: 700; font-size: .95rem; letter-spacing: .2px; white-space: nowrap; }
+.sidebar .brand .brand-logo { font-size: 1.05rem; }
+.sidebar .brand .tagline { display: block; font-family: var(--font-body); font-weight: 400; text-transform: none; font-size: .68rem; color: rgba(255,255,255,.5); letter-spacing: 0; margin-top: 2px; }
 
 .sidebar nav { flex: 1; display: flex; flex-direction: column; gap: 2px; }
 .sidebar nav a {
@@ -144,7 +174,7 @@ a { color: inherit; text-decoration: none; }
 .sidebar nav a.active {
   background: rgba(255,255,255,.08);
   color: #fff;
-  border-left-color: var(--gold);
+  border-left-color: var(--teal);
   font-weight: 600;
 }
 .sidebar .logout {
@@ -222,7 +252,7 @@ table tr:hover td { background: #fafbfc; }
 }
 .badge-published { background: #e9f9ef; color: var(--success); }
 .badge-draft { background: #f1f2f4; color: var(--muted); }
-.badge-nuevo { background: #fdf3e2; color: #a5730c; }
+.badge-nuevo { background: #e3f7f8; color: var(--teal-dark); }
 .badge-contactado { background: #e6f0fb; color: #1a5aa8; }
 .badge-cerrado { background: #f1f2f4; color: var(--muted); }
 
@@ -280,7 +310,7 @@ table tr:hover td { background: #fafbfc; }
   font-size: .85rem;
   cursor: pointer;
 }
-.upload-drop:hover { border-color: var(--gold); color: var(--navy); }
+.upload-drop:hover { border-color: var(--teal); color: var(--navy); }
 
 .empty-state { text-align: center; padding: 50px 20px; color: var(--muted); }
 

@@ -19,6 +19,17 @@ const CONDITION_LABELS = {
 
 const HOUSE_ICON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v9.5a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10"/></svg>`;
 
+const BRAND_MARK_SVG = `<svg viewBox="0 0 40 40" aria-hidden="true">
+  <path d="M6 17 L20 6 L34 17" fill="none" stroke="currentColor" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="20" cy="25" r="11.5" fill="none" stroke="currentColor" stroke-width="4"/>
+  <line class="bar" x1="16" y1="20" x2="16" y2="30" stroke-width="4.2" stroke-linecap="round"/>
+  <line class="bar" x1="24" y1="20" x2="24" y2="30" stroke-width="4.2" stroke-linecap="round"/>
+</svg>`;
+
+function brandLogoHtml() {
+  return `<span class="brand-logo">B<span class="brand-mark">${BRAND_MARK_SVG}</span>MMAIN</span>`;
+}
+
 async function fetchJson(path, options) {
   const res = await fetch(path, options);
   const text = await res.text();
@@ -55,7 +66,7 @@ function renderHeader(active) {
   ];
   el.innerHTML = `
     <div class="bar">
-      <a class="logo" href="/index.html"><span class="dot"></span>Horizonte Inmobiliaria</a>
+      <a class="logo" href="/index.html">${brandLogoHtml()}</a>
       <button class="nav-toggle" id="navToggle" aria-label="Abrir menu">&#9776;</button>
       <nav class="nav-links" id="navLinks">
         ${links.map((l) => `<a href="${l.href}" class="${l.key === active ? 'active' : ''}">${l.label}</a>`).join('')}
@@ -74,8 +85,8 @@ function renderFooter() {
     <div class="container">
       <div class="footer-grid">
         <div>
-          <h4>Horizonte Inmobiliaria</h4>
-          <p>Te acompañamos en cada paso de la compra, venta o alquiler de tu próxima vivienda, con un trato cercano y profesional.</p>
+          <div style="font-size:1.15rem;margin-bottom:12px;">${brandLogoHtml()}</div>
+          <p>Trobem la teva llar. Te acompañamos en cada paso de la compra, venta o alquiler de tu próxima vivienda, con proximidad, confianza y transparencia.</p>
         </div>
         <div>
           <h4>Enlaces</h4>
@@ -91,11 +102,11 @@ function renderFooter() {
           <ul>
             <li>Calle Colón, 25 · Valencia</li>
             <li>+34 960 000 000</li>
-            <li>hola@horizonteinmobiliaria.test</li>
+            <li>hola@bommain.com</li>
           </ul>
         </div>
       </div>
-      <div class="footer-bottom">© ${new Date().getFullYear()} Horizonte Inmobiliaria. Sitio de demostración con fines educativos.</div>
+      <div class="footer-bottom">© ${new Date().getFullYear()} BÔMMAIN. Sitio de demostración con fines educativos. · www.bommain.com</div>
     </div>
   `;
 }

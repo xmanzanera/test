@@ -75,7 +75,7 @@ function nextReference() {
     const match = row.reference.match(/(\d+)$/);
     if (match) next = parseInt(match[1], 10) + 1;
   }
-  return `HZ-${String(next).padStart(4, '0')}`;
+  return `BM-${String(next).padStart(4, '0')}`;
 }
 
 function list(req, res, query) {

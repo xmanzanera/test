@@ -1,14 +1,18 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
 :root {
-  --navy: #0f2942;
-  --navy-light: #16385a;
-  --gold: #c8a34d;
-  --gold-dark: #a9843a;
+  --navy: #0f2436;
+  --navy-light: #1b3c53;
+  --teal: #20b6c1;
+  --teal-dark: #17939c;
   --bg: #f7f7f5;
   --card: #ffffff;
   --text: #1c2530;
   --muted: #667085;
-  --border: #e6e6e2;
+  --border: #e6e6e6;
   --radius: 12px;
+  --font-heading: 'Montserrat', 'Segoe UI', system-ui, sans-serif;
+  --font-body: 'Inter', 'Segoe UI', system-ui, sans-serif;
 }
 
 * { box-sizing: border-box; }
@@ -16,16 +20,40 @@ html { scroll-behavior: smooth; }
 
 body {
   margin: 0;
-  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-family: var(--font-body);
   background: var(--bg);
   color: var(--text);
   line-height: 1.5;
 }
 
+h1, h2, h3, h4, .hero h1 { font-family: var(--font-heading); }
+
 a { color: inherit; text-decoration: none; }
 img { max-width: 100%; display: block; }
 
 .container { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
+
+/* --- Marca BOMMAIN --- */
+.brand-logo {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .01em;
+  color: currentColor;
+  white-space: nowrap;
+}
+.brand-logo .brand-mark {
+  display: inline-flex;
+  width: 1em;
+  height: 1em;
+  margin: 0 .04em;
+  color: currentColor;
+  flex-shrink: 0;
+}
+.brand-logo .brand-mark svg { width: 100%; height: 100%; display: block; }
+.brand-logo .brand-mark .bar { stroke: var(--teal); }
 
 /* --- Header --- */
 .site-header {
@@ -43,12 +71,12 @@ img { max-width: 100%; display: block; }
   max-width: 1180px;
   margin: 0 auto;
 }
-.logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.15rem; letter-spacing: .3px; }
-.logo .dot { width: 13px; height: 13px; border-radius: 3px; background: var(--gold); }
+.logo { display: flex; align-items: center; gap: 10px; }
+.logo .brand-logo { font-size: 1.2rem; }
 
 .nav-links { display: flex; gap: 28px; }
 .nav-links a { font-size: .92rem; color: rgba(255,255,255,.8); padding: 6px 0; border-bottom: 2px solid transparent; }
-.nav-links a:hover, .nav-links a.active { color: #fff; border-bottom-color: var(--gold); }
+.nav-links a:hover, .nav-links a.active { color: #fff; border-bottom-color: var(--teal); }
 
 .nav-toggle { display: none; background: none; border: none; color: #fff; font-size: 1.4rem; cursor: pointer; }
 
@@ -69,8 +97,8 @@ img { max-width: 100%; display: block; }
 /* --- Hero --- */
 .hero {
   background:
-    linear-gradient(135deg, rgba(15,41,66,.92), rgba(15,41,66,.75)),
-    repeating-linear-gradient(45deg, #16385a 0 40px, #123049 40px 80px);
+    linear-gradient(135deg, rgba(15,36,54,.93), rgba(15,36,54,.78)),
+    repeating-linear-gradient(45deg, #1b3c53 0 40px, #102838 40px 80px);
   color: #fff;
   padding: 80px 24px 60px;
   text-align: center;
@@ -117,7 +145,7 @@ img { max-width: 100%; display: block; }
   transition: transform .12s, opacity .12s;
 }
 .btn:hover { opacity: .9; }
-.btn-gold { background: var(--gold); color: var(--navy); }
+.btn-accent { background: var(--teal); color: var(--navy); }
 .btn-navy { background: var(--navy); color: #fff; }
 .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
 
@@ -126,7 +154,7 @@ img { max-width: 100%; display: block; }
 .section-head { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 30px; flex-wrap: wrap; gap: 14px; }
 .section-head h2 { font-size: 1.6rem; margin: 0 0 6px; }
 .section-head p { color: var(--muted); margin: 0; font-size: .95rem; }
-.eyebrow { color: var(--gold-dark); font-weight: 700; font-size: .78rem; letter-spacing: .08em; text-transform: uppercase; }
+.eyebrow { color: var(--teal-dark); font-weight: 700; font-size: .78rem; letter-spacing: .08em; text-transform: uppercase; }
 
 /* --- Property grid & cards --- */
 .property-grid {
@@ -168,7 +196,7 @@ img { max-width: 100%; display: block; }
   text-transform: uppercase;
   letter-spacing: .04em;
 }
-.tag.alquiler { background: var(--gold-dark); }
+.tag.alquiler { background: var(--teal-dark); }
 
 .property-body { padding: 18px; }
 .property-price { font-size: 1.25rem; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
@@ -271,8 +299,29 @@ img { max-width: 100%; display: block; }
 .value-card h3 { margin: 0 0 8px; font-size: 1.05rem; color: var(--navy); }
 .value-card p { margin: 0; color: var(--muted); font-size: .9rem; }
 
+/* --- Franja de valores de marca --- */
+.trust-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  margin-top: 30px;
+}
+@media (max-width: 900px) { .trust-strip { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 520px) { .trust-strip { grid-template-columns: 1fr; } }
+.trust-item { display: flex; align-items: flex-start; gap: 14px; }
+.trust-item .icon {
+  width: 42px; height: 42px; flex-shrink: 0;
+  border-radius: 10px;
+  background: #e8f9fa;
+  color: var(--teal-dark);
+  display: flex; align-items: center; justify-content: center;
+}
+.trust-item .icon svg { width: 20px; height: 20px; }
+.trust-item h4 { margin: 0 0 3px; font-size: .92rem; color: var(--navy); }
+.trust-item p { margin: 0; font-size: .8rem; color: var(--muted); }
+
 .stats-row { display: flex; gap: 40px; flex-wrap: wrap; margin-top: 34px; }
-.stats-row .stat .value { font-size: 2rem; font-weight: 700; color: var(--gold-dark); }
+.stats-row .stat .value { font-size: 2rem; font-weight: 700; color: var(--teal-dark); }
 .stats-row .stat .label { color: var(--muted); font-size: .85rem; }
 
 /* --- Messages / states --- */
