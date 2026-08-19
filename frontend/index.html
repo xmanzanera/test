@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Horizonte Inmobiliaria · Compra, venta y alquiler de inmuebles</title>
+<meta name="description" content="Encuentra tu próxima vivienda con Horizonte Inmobiliaria: pisos, chalets y locales en venta y alquiler." />
+<link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <header class="site-header" id="site-header"></header>
+
+  <section class="hero">
+    <span class="eyebrow" style="color:#e4c883;">Horizonte Inmobiliaria</span>
+    <h1>Encuentra el hogar que estabas buscando</h1>
+    <p>Miles de familias ya confiaron en nosotros para comprar, vender o alquilar su vivienda. Empieza tu búsqueda hoy mismo.</p>
+
+    <form class="search-box" id="heroSearch">
+      <select name="operation">
+        <option value="">Comprar o alquilar</option>
+        <option value="venta">Comprar</option>
+        <option value="alquiler">Alquilar</option>
+      </select>
+      <select name="type">
+        <option value="">Tipo de inmueble</option>
+        <option value="piso">Piso</option>
+        <option value="atico">Ático</option>
+        <option value="duplex">Dúplex</option>
+        <option value="chalet">Chalet</option>
+        <option value="casa">Casa</option>
+        <option value="local">Local comercial</option>
+      </select>
+      <input type="text" name="city" placeholder="Ciudad o zona" />
+      <input type="number" name="maxPrice" placeholder="Precio máximo" min="0" />
+      <button class="btn btn-gold" type="submit">Buscar</button>
+    </form>
+  </section>
+
+  <section class="section container">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">Selección</span>
+        <h2>Inmuebles destacados</h2>
+      </div>
+      <a class="btn btn-outline" href="/propiedades.html">Ver todos los inmuebles</a>
+    </div>
+    <div class="property-grid" id="featuredGrid">
+      <div class="loading">Cargando inmuebles destacados…</div>
+    </div>
+  </section>
+
+  <section class="section container" style="padding-top:0;">
+    <div class="value-grid">
+      <div class="value-card">
+        <h3>Asesoramiento personalizado</h3>
+        <p>Un agente dedicado te acompaña durante todo el proceso de compra, venta o alquiler.</p>
+      </div>
+      <div class="value-card">
+        <h3>Inmuebles verificados</h3>
+        <p>Revisamos cada propiedad antes de publicarla para garantizar información fiable.</p>
+      </div>
+      <div class="value-card">
+        <h3>Gestión sin complicaciones</h3>
+        <p>Nos encargamos de la documentación y los trámites para que tú solo tengas que decidir.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer" id="site-footer"></footer>
+
+  <script src="/js/app.js"></script>
+  <script>
+    renderHeader('inicio');
+    renderFooter();
+
+    document.getElementById('heroSearch').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const params = new URLSearchParams(new FormData(e.target));
+      for (const [key, value] of [...params.entries()]) {
+        if (!value) params.delete(key);
+      }
+      window.location.href = `/propiedades.html?${params.toString()}`;
+    });
+
+    (async () => {
+      const grid = document.getElementById('featuredGrid');
+      try {
+        const { items } = await fetchJson('/api/properties?featured=1&pageSize=6');
+        if (items.length === 0) {
+          grid.innerHTML = '<div class="empty-state">Todavía no hay inmuebles destacados.</div>';
+        } else {
+          grid.innerHTML = items.map(propertyCardHtml).join('');
+        }
+      } catch (err) {
+        grid.innerHTML = `<div class="empty-state">${escapeHtml(err.message)}</div>`;
+      }
+    })();
+  </script>
+</body>
+</html>

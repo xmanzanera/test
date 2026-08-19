@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Inmueble · Horizonte Admin</title>
+<link rel="stylesheet" href="/admin/css/admin.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main class="main">
+      <div class="page-header">
+        <div>
+          <h1 id="pageTitle">Nuevo inmueble</h1>
+          <p id="pageSubtitle">Rellena los datos del inmueble</p>
+        </div>
+        <a class="btn btn-outline" href="/admin/propiedades.html">← Volver al listado</a>
+      </div>
+
+      <div id="msgBox"></div>
+
+      <div class="card">
+        <form id="propertyForm">
+          <div class="form-grid">
+            <div class="field full">
+              <label for="title">Título</label>
+              <input id="title" required minlength="3" placeholder="Ej. Piso luminoso junto al parque" />
+            </div>
+
+            <div class="field">
+              <label for="operation">Operación</label>
+              <select id="operation">
+                <option value="venta">Venta</option>
+                <option value="alquiler">Alquiler</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="type">Tipo de inmueble</label>
+              <select id="type">
+                <option value="piso">Piso</option>
+                <option value="atico">Ático</option>
+                <option value="duplex">Dúplex</option>
+                <option value="chalet">Chalet</option>
+                <option value="casa">Casa</option>
+                <option value="local">Local comercial</option>
+                <option value="garaje">Garaje</option>
+                <option value="terreno">Terreno</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="condition">Estado del inmueble</label>
+              <select id="condition">
+                <option value="obra_nueva">Obra nueva</option>
+                <option value="segunda_mano">Segunda mano</option>
+                <option value="reformado">Reformado</option>
+                <option value="a_reformar">A reformar</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="status">Publicación</label>
+              <select id="status">
+                <option value="draft">Borrador</option>
+                <option value="published">Publicado</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="price">Precio (€)</label>
+              <input id="price" type="number" min="0" step="1" required />
+            </div>
+            <div class="field">
+              <label for="area_m2">Superficie (m²)</label>
+              <input id="area_m2" type="number" min="0" step="1" required />
+            </div>
+
+            <div class="field">
+              <label for="rooms">Habitaciones</label>
+              <input id="rooms" type="number" min="0" step="1" value="0" />
+            </div>
+            <div class="field">
+              <label for="bathrooms">Baños</label>
+              <input id="bathrooms" type="number" min="0" step="1" value="0" />
+            </div>
+
+            <div class="field">
+              <label for="city">Ciudad</label>
+              <input id="city" required />
+            </div>
+            <div class="field">
+              <label for="neighborhood">Zona / Barrio</label>
+              <input id="neighborhood" />
+            </div>
+
+            <div class="field">
+              <label for="address">Dirección</label>
+              <input id="address" />
+            </div>
+            <div class="field">
+              <label for="floor">Planta</label>
+              <input id="floor" placeholder="Ej. 3º, Bajo…" />
+            </div>
+
+            <div class="field full">
+              <label for="description">Descripción</label>
+              <textarea id="description" rows="5"></textarea>
+            </div>
+
+            <div class="field full">
+              <label>Características</label>
+              <div style="display:flex;flex-wrap:wrap;gap:16px;">
+                <label class="checkbox-row"><input type="checkbox" id="has_elevator" /> Ascensor</label>
+                <label class="checkbox-row"><input type="checkbox" id="has_garage" /> Garaje</label>
+                <label class="checkbox-row"><input type="checkbox" id="has_terrace" /> Terraza</label>
+                <label class="checkbox-row"><input type="checkbox" id="has_pool" /> Piscina</label>
+                <label class="checkbox-row"><input type="checkbox" id="featured" /> Destacado en portada</label>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top:22px;">
+            <button class="btn btn-primary" type="submit" id="submitBtn">Guardar inmueble</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="card" style="margin-top:20px;" id="imagesCard" hidden>
+        <h2 style="margin-top:0;font-size:1.05rem;">Fotografías</h2>
+        <p style="color:var(--muted);font-size:.85rem;margin-top:-8px;">Formatos admitidos: JPG, PNG, WEBP, GIF (máx. 8MB por imagen).</p>
+        <div class="image-grid" id="imageGrid"></div>
+        <div class="upload-drop" id="uploadDrop">Haz clic para subir una imagen</div>
+        <input type="file" id="fileInput" accept="image/png,image/jpeg,image/webp,image/gif" hidden />
+      </div>
+    </main>
+  </div>
+
+  <script src="/admin/js/admin.js"></script>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const propertyId = params.get('id');
+    let images = [];
+
+    const fields = [
+      'title', 'operation', 'type', 'condition', 'status', 'price', 'area_m2',
+      'rooms', 'bathrooms', 'city', 'neighborhood', 'address', 'floor', 'description',
+    ];
+    const boolFields = ['has_elevator', 'has_garage', 'has_terrace', 'has_pool', 'featured'];
+
+    function readForm() {
+      const data = {};
+      for (const f of fields) {
+        const el = document.getElementById(f);
+        data[f] = ['price', 'area_m2', 'rooms', 'bathrooms'].includes(f) ? Number(el.value) : el.value;
+      }
+      for (const f of boolFields) data[f] = document.getElementById(f).checked;
+      return data;
+    }
+
+    function fillForm(p) {
+      for (const f of fields) document.getElementById(f).value = p[f] ?? '';
+      for (const f of boolFields) document.getElementById(f).checked = Boolean(p[f]);
+    }
+
+    function renderImages() {
+      const grid = document.getElementById('imageGrid');
+      grid.innerHTML = images
+        .map((img) => `<div class="img-item"><img src="${img.url}" alt=""><button data-remove="${img.id}">✕</button></div>`)
+        .join('');
+      grid.querySelectorAll('[data-remove]').forEach((btn) => {
+        btn.addEventListener('click', async () => {
+          try {
+            await api(`/api/images/${btn.dataset.remove}`, { method: 'DELETE' });
+            images = images.filter((i) => String(i.id) !== btn.dataset.remove);
+            renderImages();
+          } catch (err) {
+            alert(err.message);
+          }
+        });
+      });
+    }
+
+    document.getElementById('uploadDrop').addEventListener('click', () => document.getElementById('fileInput').click());
+    document.getElementById('fileInput').addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      try {
+        const dataUrl = await fileToDataUrl(file);
+        const img = await api(`/api/properties/${propertyId}/images`, {
+          method: 'POST',
+          body: JSON.stringify({ data: dataUrl }),
+        });
+        images.push(img);
+        renderImages();
+      } catch (err) {
+        alert(err.message);
+      } finally {
+        e.target.value = '';
+      }
+    });
+
+    document.getElementById('propertyForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const msgBox = document.getElementById('msgBox');
+      msgBox.innerHTML = '';
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.disabled = true;
+      try {
+        const data = readForm();
+        if (propertyId) {
+          await api(`/api/properties/${propertyId}`, { method: 'PUT', body: JSON.stringify(data) });
+          msgBox.innerHTML = '<div class="success-msg">Cambios guardados correctamente.</div>';
+        } else {
+          const created = await api('/api/properties', { method: 'POST', body: JSON.stringify(data) });
+          window.location.href = `/admin/propiedad-form.html?id=${created.id}`;
+          return;
+        }
+      } catch (err) {
+        msgBox.innerHTML = `<div class="error-msg">${escapeHtml(err.message)}</div>`;
+      } finally {
+        submitBtn.disabled = false;
+      }
+    });
+
+    (async () => {
+      const user = await requireAuth();
+      if (!user) return;
+      renderSidebar('propiedades');
+
+      if (propertyId) {
+        document.getElementById('pageTitle').textContent = 'Editar inmueble';
+        document.getElementById('pageSubtitle').textContent = 'Actualiza los datos y las fotografías';
+        document.getElementById('imagesCard').hidden = false;
+        try {
+          const p = await api(`/api/properties/${propertyId}`);
+          fillForm(p);
+          images = p.images;
+          renderImages();
+        } catch (err) {
+          document.getElementById('msgBox').innerHTML = `<div class="error-msg">${escapeHtml(err.message)}</div>`;
+        }
+      } else {
+        document.getElementById('pageSubtitle').textContent = 'Guarda el inmueble para poder añadir fotografías';
+      }
+    })();
+  </script>
+</body>
+</html>

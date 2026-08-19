@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Mensajes · Horizonte Admin</title>
+<link rel="stylesheet" href="/admin/css/admin.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main class="main">
+      <div class="page-header">
+        <div>
+          <h1>Mensajes de contacto</h1>
+          <p>Consultas recibidas desde la web pública</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div id="tableWrap" class="loading">Cargando mensajes…</div>
+      </div>
+    </main>
+  </div>
+
+  <script src="/admin/js/admin.js"></script>
+  <script>
+    async function load() {
+      const wrap = document.getElementById('tableWrap');
+      const { items } = await api('/api/leads');
+      if (items.length === 0) {
+        wrap.innerHTML = '<div class="empty-state">Todavía no hay mensajes.</div>';
+        return;
+      }
+      wrap.innerHTML = `
+        <table>
+          <thead>
+            <tr><th>Fecha</th><th>Nombre</th><th>Contacto</th><th>Inmueble</th><th>Mensaje</th><th>Estado</th><th></th></tr>
+          </thead>
+          <tbody>
+            ${items
+              .map(
+                (l) => `
+              <tr>
+                <td>${formatDate(l.created_at)}</td>
+                <td>${escapeHtml(l.name)}</td>
+                <td>${escapeHtml(l.email)}${l.phone ? `<br><span style="color:var(--muted)">${escapeHtml(l.phone)}</span>` : ''}</td>
+                <td>${l.property_slug ? `<a href="/propiedad.html?slug=${l.property_slug}" target="_blank">${escapeHtml(l.property_title)}</a>` : '—'}</td>
+                <td style="max-width:260px;white-space:pre-wrap;">${escapeHtml(l.message)}</td>
+                <td>
+                  <select data-status="${l.id}">
+                    ${Object.entries(LEAD_STATUS_LABELS)
+                      .map(([k, v]) => `<option value="${k}" ${k === l.status ? 'selected' : ''}>${v}</option>`)
+                      .join('')}
+                  </select>
+                </td>
+                <td><button class="btn btn-danger btn-sm" data-delete="${l.id}">Eliminar</button></td>
+              </tr>`
+              )
+              .join('')}
+          </tbody>
+        </table>
+      `;
+
+      wrap.querySelectorAll('[data-status]').forEach((sel) => {
+        sel.addEventListener('change', async () => {
+          try {
+            await api(`/api/leads/${sel.dataset.status}`, { method: 'PUT', body: JSON.stringify({ status: sel.value }) });
+          } catch (err) {
+            alert(err.message);
+          }
+        });
+      });
+      wrap.querySelectorAll('[data-delete]').forEach((btn) => {
+        btn.addEventListener('click', async () => {
+          if (!confirm('¿Eliminar este mensaje?')) return;
+          try {
+            await api(`/api/leads/${btn.dataset.delete}`, { method: 'DELETE' });
+            await load();
+          } catch (err) {
+            alert(err.message);
+          }
+        });
+      });
+    }
+
+    (async () => {
+      const user = await requireAuth();
+      if (!user) return;
+      renderSidebar('mensajes');
+      try {
+        await load();
+      } catch (err) {
+        document.getElementById('tableWrap').innerHTML = `<div class="error-msg">${escapeHtml(err.message)}</div>`;
+      }
+    })();
+  </script>
+</body>
+</html>

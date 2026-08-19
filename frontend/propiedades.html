@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Inmuebles en venta y alquiler · Horizonte Inmobiliaria</title>
+<link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <header class="site-header" id="site-header"></header>
+
+  <section class="section container">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">Catálogo</span>
+        <h2>Inmuebles disponibles</h2>
+      </div>
+    </div>
+
+    <div class="listing-layout">
+      <aside class="filters-card">
+        <h3>Filtrar búsqueda</h3>
+        <form id="filterForm">
+          <div class="filter-field">
+            <label for="f-q">Buscar</label>
+            <input id="f-q" name="q" type="text" placeholder="Título, ciudad, zona…" />
+          </div>
+          <div class="filter-field">
+            <label for="f-operation">Operación</label>
+            <select id="f-operation" name="operation">
+              <option value="">Todas</option>
+              <option value="venta">Venta</option>
+              <option value="alquiler">Alquiler</option>
+            </select>
+          </div>
+          <div class="filter-field">
+            <label for="f-type">Tipo</label>
+            <select id="f-type" name="type">
+              <option value="">Todos</option>
+              <option value="piso">Piso</option>
+              <option value="atico">Ático</option>
+              <option value="duplex">Dúplex</option>
+              <option value="chalet">Chalet</option>
+              <option value="casa">Casa</option>
+              <option value="local">Local comercial</option>
+              <option value="garaje">Garaje</option>
+              <option value="terreno">Terreno</option>
+            </select>
+          </div>
+          <div class="filter-field">
+            <label for="f-city">Ciudad</label>
+            <input id="f-city" name="city" type="text" placeholder="Ej. Valencia" />
+          </div>
+          <div class="filter-field">
+            <label>Precio (€)</label>
+            <div class="filter-range">
+              <input name="minPrice" type="number" min="0" placeholder="Mín." />
+              <input name="maxPrice" type="number" min="0" placeholder="Máx." />
+            </div>
+          </div>
+          <div class="filter-field">
+            <label for="f-rooms">Habitaciones mín.</label>
+            <select id="f-rooms" name="rooms">
+              <option value="">Cualquiera</option>
+              <option value="1">1+</option>
+              <option value="2">2+</option>
+              <option value="3">3+</option>
+              <option value="4">4+</option>
+            </select>
+          </div>
+          <button class="btn btn-navy" type="submit" style="width:100%;">Aplicar filtros</button>
+        </form>
+      </aside>
+
+      <div>
+        <div class="results-bar">
+          <p id="resultsCount">Cargando resultados…</p>
+        </div>
+        <div class="property-grid" id="resultsGrid"></div>
+        <div class="pagination" id="pagination"></div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer" id="site-footer"></footer>
+
+  <script src="/js/app.js"></script>
+  <script>
+    renderHeader('comprar');
+    renderFooter();
+
+    const form = document.getElementById('filterForm');
+
+    function currentParams() {
+      return new URLSearchParams(window.location.search);
+    }
+
+    function fillFormFromParams(params) {
+      for (const [key, value] of params.entries()) {
+        if (form.elements[key]) form.elements[key].value = value;
+      }
+    }
+
+    async function loadResults(page = 1) {
+      const grid = document.getElementById('resultsGrid');
+      const countEl = document.getElementById('resultsCount');
+      grid.innerHTML = '<div class="loading">Cargando inmuebles…</div>';
+
+      const params = currentParams();
+      params.set('page', page);
+      params.set('pageSize', '9');
+
+      try {
+        const data = await fetchJson(`/api/properties?${params.toString()}`);
+        if (data.items.length === 0) {
+          grid.innerHTML = '<div class="empty-state">No se han encontrado inmuebles con estos filtros.</div>';
+          countEl.textContent = '0 resultados';
+          document.getElementById('pagination').innerHTML = '';
+          return;
+        }
+        grid.innerHTML = data.items.map(propertyCardHtml).join('');
+        countEl.textContent = `${data.total} inmueble${data.total === 1 ? '' : 's'} encontrado${data.total === 1 ? '' : 's'}`;
+        renderPagination(data.total, data.page, data.pageSize);
+      } catch (err) {
+        grid.innerHTML = `<div class="empty-state">${escapeHtml(err.message)}</div>`;
+      }
+    }
+
+    function renderPagination(total, page, pageSize) {
+      const pages = Math.ceil(total / pageSize);
+      const el = document.getElementById('pagination');
+      if (pages <= 1) { el.innerHTML = ''; return; }
+      let html = '';
+      for (let i = 1; i <= pages; i++) {
+        html += `<button class="${i === page ? 'active' : ''}" data-page="${i}">${i}</button>`;
+      }
+      el.innerHTML = html;
+      el.querySelectorAll('button').forEach((btn) => {
+        btn.addEventListener('click', () => loadResults(Number(btn.dataset.page)));
+      });
+    }
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const params = new URLSearchParams(new FormData(form));
+      for (const [key, value] of [...params.entries()]) {
+        if (!value) params.delete(key);
+      }
+      window.history.replaceState(null, '', `/propiedades.html?${params.toString()}`);
+      loadResults(1);
+    });
+
+    fillFormFromParams(currentParams());
+    loadResults(1);
+  </script>
+</body>
+</html>

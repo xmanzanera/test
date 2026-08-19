@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Contacto · Horizonte Inmobiliaria</title>
+<link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <header class="site-header" id="site-header"></header>
+
+  <section class="section container">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">Hablemos</span>
+        <h2>Ponte en contacto con nosotros</h2>
+      </div>
+    </div>
+
+    <div class="contact-layout">
+      <div>
+        <p style="color:var(--muted);">¿Tienes dudas sobre un inmueble, quieres tasar tu vivienda o simplemente saber más sobre nosotros? Escríbenos y te responderemos lo antes posible.</p>
+        <ul class="info-list">
+          <li><strong>Dirección:</strong> Calle Colón, 25 · Valencia</li>
+          <li><strong>Teléfono:</strong> +34 960 000 000</li>
+          <li><strong>Email:</strong> hola@horizonteinmobiliaria.test</li>
+          <li><strong>Horario:</strong> Lunes a viernes, 9:00–14:00 y 16:00–19:30</li>
+        </ul>
+      </div>
+
+      <div class="contact-card" style="position:static;">
+        <h3>Envíanos un mensaje</h3>
+        <p class="agent">Te responderemos en menos de 24 horas laborables.</p>
+        <form id="contactForm">
+          <div class="field"><label>Nombre</label><input name="name" required /></div>
+          <div class="field"><label>Email</label><input name="email" type="email" required /></div>
+          <div class="field"><label>Teléfono</label><input name="phone" /></div>
+          <div class="field"><label>Mensaje</label><textarea name="message" rows="5" required placeholder="Cuéntanos qué necesitas…"></textarea></div>
+          <button class="btn btn-gold" type="submit" style="width:100%;">Enviar mensaje</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer" id="site-footer"></footer>
+
+  <script src="/js/app.js"></script>
+  <script>
+    renderHeader('contacto');
+    renderFooter();
+    initContactForm(document.getElementById('contactForm'));
+  </script>
+</body>
+</html>

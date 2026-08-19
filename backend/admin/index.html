@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Acceso · Panel de administración</title>
+<link rel="stylesheet" href="/admin/css/admin.css" />
+</head>
+<body>
+  <div class="auth-shell">
+    <div class="auth-card">
+      <div class="brand"><span class="dot"></span><span>Horizonte Inmobiliaria</span></div>
+      <h1>Accede al panel de gestión de inmuebles</h1>
+      <div id="errorBox"></div>
+      <form id="loginForm">
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" type="email" required autocomplete="username" value="admin@horizonte.test" />
+        </div>
+        <div class="field">
+          <label for="password">Contraseña</label>
+          <input id="password" type="password" required autocomplete="current-password" value="admin1234" />
+        </div>
+        <button class="btn btn-primary btn-block" type="submit">Entrar</button>
+      </form>
+      <p class="hint">Credenciales de demostración precargadas.</p>
+    </div>
+  </div>
+
+  <script src="/admin/js/admin.js"></script>
+  <script>
+    (async () => {
+      try {
+        await api('/api/auth/me');
+        window.location.href = '/admin/dashboard.html';
+      } catch {
+        // no autenticado, se queda en el login
+      }
+    })();
+
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const errorBox = document.getElementById('errorBox');
+      errorBox.innerHTML = '';
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      try {
+        await api('/api/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) });
+        window.location.href = '/admin/dashboard.html';
+      } catch (err) {
+        errorBox.innerHTML = `<div class="error-msg">${escapeHtml(err.message)}</div>`;
+      }
+    });
+  </script>
+</body>
+</html>

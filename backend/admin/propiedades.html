@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Inmuebles · Horizonte Admin</title>
+<link rel="stylesheet" href="/admin/css/admin.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main class="main">
+      <div class="page-header">
+        <div>
+          <h1>Inmuebles</h1>
+          <p>Gestiona el catálogo completo de propiedades</p>
+        </div>
+        <a class="btn btn-gold" href="/admin/propiedad-form.html">+ Nuevo inmueble</a>
+      </div>
+
+      <div class="toolbar">
+        <input id="searchInput" type="text" placeholder="Buscar por título o ciudad…" />
+        <select id="statusFilter">
+          <option value="all">Todos los estados</option>
+          <option value="published">Publicados</option>
+          <option value="draft">Borradores</option>
+        </select>
+        <div class="spacer"></div>
+      </div>
+
+      <div class="card">
+        <div id="tableWrap" class="loading">Cargando inmuebles…</div>
+      </div>
+    </main>
+  </div>
+
+  <script src="/admin/js/admin.js"></script>
+  <script>
+    let allItems = [];
+
+    function render() {
+      const q = document.getElementById('searchInput').value.trim().toLowerCase();
+      const status = document.getElementById('statusFilter').value;
+      let items = allItems;
+      if (status !== 'all') items = items.filter((p) => p.status === status);
+      if (q) {
+        items = items.filter(
+          (p) => p.title.toLowerCase().includes(q) || p.city.toLowerCase().includes(q) || p.reference.toLowerCase().includes(q)
+        );
+      }
+
+      const wrap = document.getElementById('tableWrap');
+      if (items.length === 0) {
+        wrap.innerHTML = '<div class="empty-state">No se han encontrado inmuebles.</div>';
+        return;
+      }
+
+      wrap.innerHTML = `
+        <table>
+          <thead>
+            <tr><th></th><th>Referencia</th><th>Título</th><th>Ciudad</th><th>Precio</th><th>Estado</th><th></th></tr>
+          </thead>
+          <tbody>
+            ${items
+              .map(
+                (p) => `
+              <tr>
+                <td>${p.images[0] ? `<img class="thumb" src="${p.images[0].url}" alt="">` : '<div class="thumb"></div>'}</td>
+                <td>${escapeHtml(p.reference)}</td>
+                <td>${escapeHtml(p.title)}</td>
+                <td>${escapeHtml(p.city)}</td>
+                <td>${formatPrice(p.price, p.operation)}</td>
+                <td><span class="badge badge-${p.status}">${p.status === 'published' ? 'Publicado' : 'Borrador'}</span></td>
+                <td>
+                  <div class="row-actions">
+                    <a class="btn btn-outline btn-sm" href="/admin/propiedad-form.html?id=${p.id}">Editar</a>
+                    <button class="btn btn-danger btn-sm" data-delete="${p.id}">Eliminar</button>
+                  </div>
+                </td>
+              </tr>`
+              )
+              .join('')}
+          </tbody>
+        </table>
+      `;
+
+      wrap.querySelectorAll('[data-delete]').forEach((btn) => {
+        btn.addEventListener('click', async () => {
+          if (!confirm('¿Eliminar este inmueble? Esta acción no se puede deshacer.')) return;
+          try {
+            await api(`/api/properties/${btn.dataset.delete}`, { method: 'DELETE' });
+            await load();
+          } catch (err) {
+            alert(err.message);
+          }
+        });
+      });
+    }
+
+    async function load() {
+      const { items } = await api('/api/properties?status=all&pageSize=200');
+      allItems = items;
+      render();
+    }
+
+    (async () => {
+      const user = await requireAuth();
+      if (!user) return;
+      renderSidebar('propiedades');
+      try {
+        await load();
+      } catch (err) {
+        document.getElementById('tableWrap').innerHTML = `<div class="error-msg">${escapeHtml(err.message)}</div>`;
+      }
+      document.getElementById('searchInput').addEventListener('input', render);
+      document.getElementById('statusFilter').addEventListener('change', render);
+    })();
+  </script>
+</body>
+</html>

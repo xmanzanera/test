@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Panel general · Horizonte Admin</title>
+<link rel="stylesheet" href="/admin/css/admin.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main class="main">
+      <div class="page-header">
+        <div>
+          <h1>Panel general</h1>
+          <p id="welcome"></p>
+        </div>
+        <a class="btn btn-gold" href="/admin/propiedad-form.html">+ Nuevo inmueble</a>
+      </div>
+
+      <div class="stat-grid" id="statGrid">
+        <div class="loading">Cargando estadísticas…</div>
+      </div>
+
+      <div class="card">
+        <h2 style="margin-top:0;font-size:1.05rem;">Últimos mensajes recibidos</h2>
+        <div id="recentLeads" class="loading">Cargando…</div>
+      </div>
+    </main>
+  </div>
+
+  <script src="/admin/js/admin.js"></script>
+  <script>
+    (async () => {
+      const user = await requireAuth();
+      if (!user) return;
+      renderSidebar('dashboard');
+      document.getElementById('welcome').textContent = `Hola, ${user.name}`;
+
+      try {
+        const stats = await api('/api/stats');
+        document.getElementById('statGrid').innerHTML = `
+          <div class="stat-card"><div class="value">${stats.totalProperties}</div><div class="label">Inmuebles totales</div></div>
+          <div class="stat-card"><div class="value">${stats.published}</div><div class="label">Publicados</div></div>
+          <div class="stat-card"><div class="value">${stats.drafts}</div><div class="label">Borradores</div></div>
+          <div class="stat-card"><div class="value">${stats.newLeads}</div><div class="label">Mensajes nuevos</div></div>
+        `;
+      } catch (err) {
+        document.getElementById('statGrid').innerHTML = `<div class="error-msg">${escapeHtml(err.message)}</div>`;
+      }
+
+      try {
+        const { items } = await api('/api/leads');
+        const recent = items.slice(0, 5);
+        if (recent.length === 0) {
+          document.getElementById('recentLeads').innerHTML = '<div class="empty-state">Todavía no hay mensajes.</div>';
+        } else {
+          document.getElementById('recentLeads').innerHTML = `
+            <table>
+              <thead><tr><th>Nombre</th><th>Email</th><th>Inmueble</th><th>Fecha</th><th>Estado</th></tr></thead>
+              <tbody>
+                ${recent
+                  .map(
+                    (l) => `<tr>
+                      <td>${escapeHtml(l.name)}</td>
+                      <td>${escapeHtml(l.email)}</td>
+                      <td>${l.property_title ? escapeHtml(l.property_title) : '—'}</td>
+                      <td>${formatDate(l.created_at)}</td>
+                      <td><span class="badge badge-${l.status}">${LEAD_STATUS_LABELS[l.status]}</span></td>
+                    </tr>`
+                  )
+                  .join('')}
+              </tbody>
+            </table>
+          `;
+        }
+      } catch (err) {
+        document.getElementById('recentLeads').innerHTML = `<div class="error-msg">${escapeHtml(err.message)}</div>`;
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title id="pageTitleTag">Inmueble · Horizonte Inmobiliaria</title>
+<link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <header class="site-header" id="site-header"></header>
+
+  <section class="section container" id="content">
+    <div class="loading">Cargando inmueble…</div>
+  </section>
+
+  <footer class="site-footer" id="site-footer"></footer>
+
+  <script src="/js/app.js"></script>
+  <script>
+    renderHeader('comprar');
+    renderFooter();
+
+    const slug = new URLSearchParams(window.location.search).get('slug');
+    const content = document.getElementById('content');
+
+    function galleryHtml(images, title) {
+      if (!images || images.length === 0) {
+        return `<div class="detail-gallery"><div class="main-photo" style="display:flex;align-items:center;justify-content:center;color:#8a94a3;">${HOUSE_ICON}</div></div>`;
+      }
+      const [first, ...rest] = images;
+      const side = rest.slice(0, 2);
+      return `
+        <div class="detail-gallery">
+          <div class="main-photo"><img src="${first.url}" alt="${escapeHtml(title)}"></div>
+          <div class="side-photos">
+            ${side.map((img) => `<div><img src="${img.url}" alt="${escapeHtml(title)}"></div>`).join('') || '<div></div><div></div>'}
+          </div>
+        </div>
+      `;
+    }
+
+    (async () => {
+      if (!slug) {
+        content.innerHTML = '<div class="empty-state">Inmueble no especificado.</div>';
+        return;
+      }
+      try {
+        const p = await fetchJson(`/api/properties/slug/${encodeURIComponent(slug)}`);
+        document.getElementById('pageTitleTag').textContent = `${p.title} · Horizonte Inmobiliaria`;
+
+        const chips = [];
+        if (p.has_elevator) chips.push('Ascensor');
+        if (p.has_garage) chips.push('Garaje');
+        if (p.has_terrace) chips.push('Terraza');
+        if (p.has_pool) chips.push('Piscina');
+        chips.push(CONDITION_LABELS[p.condition] || p.condition);
+
+        content.innerHTML = `
+          ${galleryHtml(p.images, p.title)}
+          <div class="detail-layout">
+            <div>
+              <div class="detail-header">
+                <div>
+                  <h1>${escapeHtml(p.title)}</h1>
+                  <div class="location">${escapeHtml(p.neighborhood ? `${p.neighborhood}, ${p.city}` : p.city)} · Ref. ${escapeHtml(p.reference)}</div>
+                </div>
+                <div class="detail-price">${formatPrice(p.price, p.operation)}</div>
+              </div>
+
+              <div class="spec-grid">
+                <div class="spec"><div class="value">${p.area_m2} m²</div><div class="label">Superficie</div></div>
+                <div class="spec"><div class="value">${p.rooms}</div><div class="label">Habitaciones</div></div>
+                <div class="spec"><div class="value">${p.bathrooms}</div><div class="label">Baños</div></div>
+                <div class="spec"><div class="value">${p.floor || '—'}</div><div class="label">Planta</div></div>
+                <div class="spec"><div class="value">${TYPE_LABELS[p.type] || p.type}</div><div class="label">Tipo</div></div>
+              </div>
+
+              <h3>Descripción</h3>
+              <p style="color:var(--muted);white-space:pre-wrap;">${escapeHtml(p.description || 'Sin descripción disponible.')}</p>
+
+              <div class="feature-chips">${chips.map((c) => `<span>${escapeHtml(c)}</span>`).join('')}</div>
+            </div>
+
+            <div class="contact-card">
+              <h3>¿Te interesa este inmueble?</h3>
+              <p class="agent">Escríbenos y un agente se pondrá en contacto contigo.</p>
+              <div id="formWrap">
+                <form id="contactForm">
+                  <div class="field"><label>Nombre</label><input name="name" required /></div>
+                  <div class="field"><label>Email</label><input name="email" type="email" required /></div>
+                  <div class="field"><label>Teléfono</label><input name="phone" /></div>
+                  <div class="field"><label>Mensaje</label><textarea name="message" rows="4" required>Hola, estoy interesado/a en este inmueble (${escapeHtml(p.reference)}). ¿Podríais darme más información?</textarea></div>
+                  <button class="btn btn-gold" type="submit" style="width:100%;">Enviar consulta</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        `;
+
+        initContactForm(document.getElementById('contactForm'), { propertyId: p.id });
+      } catch (err) {
+        content.innerHTML = `<div class="empty-state">${escapeHtml(err.message)}</div>`;
+      }
+    })();
+  </script>
+</body>
+</html>
